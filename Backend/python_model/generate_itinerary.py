@@ -209,7 +209,7 @@ for item in itinerary:
             total_cost_transportation += item['price'] * data["num_travelers"]
             # transportation_items = [item]
         elif item in hotels_data:
-            total_cost_hotel += item['price'] * \
+            total_cost_hotel = item['price'] * \
                 data["num_travelers"] * data["duration_of_stay"]
             # hotels_items = [item]
         elif item in bus_data_return + trains_data_return + flights_data_return:

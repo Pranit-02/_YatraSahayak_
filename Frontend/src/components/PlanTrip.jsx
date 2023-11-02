@@ -31,17 +31,17 @@ function PlanTrip() {
         try {
             const response = await axios.post('http://localhost:4000/generate-itinerary', requestData);
 
-            if (response.data.total_cost.total > requestData.budget) {
-                setError('Total cost exceeds the budget. Please increase your budget.');
-                setItineraryData(null);
-            } else {
-                setItineraryData(response.data);
-                setSuccess('Itinerary is generated, click on view itinerary');
-                console.log(itineraryData);
-                setError(null);
+            // if (response.data.total_cost.total > requestData.budget) {
+            //     setError('Total cost exceeds the budget. Please increase your budget.');
+            //     setItineraryData(null);
+            // } else {
+            setItineraryData(response.data);
+            setSuccess('Itinerary is generated, click on view itinerary');
+            console.log(itineraryData);
+            setError(null);
 
-                navigate('/Itinerary', { state: { itineraryData: response.data } });
-            }
+            navigate('/Itinerary', { state: { itineraryData: response.data } });
+            // }
         } catch (err) {
             setError('Unable to generate itinerary. Please check your input.');
             setItineraryData(null);
@@ -89,10 +89,18 @@ function PlanTrip() {
     const [num_travelers, setNum_travelers] = useState(1);
 
     const handleNum_travelers = (event) => {
-        const newValue = parseInt(event.target.value, 10);
+        const num_travelers = event.target.value;
 
-        setNum_travelers(isNaN(newValue) ? 1 : newValue);
+        // Validate the input value.
+        if (num_travelers < 0) {
+            // Set the value of the input field to 0.
+            event.target.value = 0;
+        } else if (num_travelers > 15) {
+            // Set the value of the input field to 15.
+            event.target.value = 15;
+        }
     };
+
     const handleTransportationChange = (event) => {
         setTransportationType(event.target.value);
     };
@@ -229,6 +237,8 @@ function PlanTrip() {
                             type="number"
                             onChange={handleNum_travelers}
                             required
+                            min="0"
+                            max="15"
                         />
                     </div>
 

@@ -87,15 +87,6 @@ const Itinerary = () => {
             </div>
             <hr />
 
-            <h1 className='all-sub-head'>Estimated Cost (INR)</h1>
-            <p>Transportation: {itineraryData?.total_cost.transportation}</p>
-            <p>Hotel: {itineraryData?.total_cost.hotel}</p>
-            <p>Food: {itineraryData?.total_cost.food}</p>
-            {/* <p>Attractions: {itineraryData?.total_cost.attractions}</p> */}
-            <p>Total Cost: {itineraryData?.total_cost.total}</p>
-
-            <hr />
-
             <h2 className='all-sub-head'>Hotel:</h2>
             <div className='hotel-card'>
                 {itineraryData?.itinerary.hotels?.map((item, index) => (
@@ -171,6 +162,15 @@ const Itinerary = () => {
                 </div>
             </div>
             <hr />
+            <h1 className='all-sub-head'>Estimated Cost (INR)</h1>
+            <p>Transportation: {itineraryData?.total_cost.transportation}</p>
+            <p>Hotel: {itineraryData?.total_cost.hotel}</p>
+            <p>Food: {itineraryData?.total_cost.food}</p>
+            {/* <p>Attractions: {itineraryData?.total_cost.attractions}</p> */}
+            <p>Total Cost: {itineraryData?.total_cost.total}</p>
+
+            <hr />
+
             <div className="link-button1">
                 <a href="/">Generate Again</a> <span />
                 <button onClick={downloadPDF}>Download Itinerary (PDF)</button>
