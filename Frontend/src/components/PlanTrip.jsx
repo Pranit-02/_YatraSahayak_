@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Loading from './Loading';
 
 function formatDateToDDMMYYYY(date) {
     if (!date) return '';
@@ -15,9 +16,12 @@ function PlanTrip() {
     const [transportationType, setTransportationType] = useState('bus');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+
         const formData = new FormData(e.target);
         const requestData = Object.fromEntries(formData.entries());
         console.log(requestData);
@@ -45,6 +49,8 @@ function PlanTrip() {
         } catch (err) {
             setError('Unable to generate itinerary. Please check your input.');
             setItineraryData(null);
+        } finally {
+            setIsLoading(false); // Set loading to false after the request is complete
         }
     };
     const [start_location, setStart_location] = useState('');
@@ -137,6 +143,7 @@ function PlanTrip() {
         <div className='container'>
             <form onSubmit={handleSubmit}>
                 <section className='trip-content'>
+                    
                     <h1>Tell us your travel preferences</h1>
 
                     <p className='mid-text'>What is the starting location ?</p>
@@ -192,7 +199,7 @@ function PlanTrip() {
                             value={date_of_departure}
                             onChange={(event) => setDate_of_departure(event.target.value)}
                             required
-                            min={minDate} // Set the min attribute using ISO date format
+                            // min={minDate} // Set the min attribute using ISO date format
                         />
                         <input
                             type='date'
@@ -210,7 +217,7 @@ function PlanTrip() {
 
                     <p className='mid-text'>How many days are you planning to travel ?</p>
                     <div className='day-count'>
-                        <p>Day</p>
+                        <p>Days:</p>
                         <input type="text" name="duration_of_stay" value={calculatedDuration} readOnly />
                     </div>
                     <hr />
@@ -249,6 +256,7 @@ function PlanTrip() {
                 </div>
 
             </form>
+            {isLoading && <Loading />}
             {error && <div style={{ color: 'red' }}>{error}</div>}
             {success && <div style={{ color: 'green' }}>{success}</div>}
 

@@ -10,25 +10,26 @@ import { spawn } from 'child_process';
 // import googleAuthConfig from "./config/google.config";
 
 // Database connection
-import ConnectDB from "./database/connection";
+import ConnectDB from "./database/connection"; 
 
 // import Auth from "./api/auth";
 // import User from "./api/user";
 
-dotenv.config();
+dotenv.config(); 
 
 // privateRouteConfig(passport);
 // googleAuthConfig(passport);
 
 const yatra = express();
 const corsOptions = {
-  origin: 'http://127.0.0.1:5173',
+  origin: 'http://localhost:5173',
   credentials: true, //access-control-allow-credentials:true
-  optionSuccessStatus: 200
+  optionsSuccessStatus: 200
 };
 
 // Apply CORS middleware
 yatra.use(cors(corsOptions));
+
 
 yatra.use(express.json());
 yatra.use(session({ secret: process.env.JWTSECRET }));

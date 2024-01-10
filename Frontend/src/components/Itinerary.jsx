@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useState,useRef } from 'react';
 import Locations from './Locations';
 import Hotels from './Hotels';
 import Restaurants from './Restaurants';
@@ -15,6 +15,7 @@ import jsPDF from 'jspdf';
 
 const Itinerary = () => {
     const pdfRef = useRef();
+
     const downloadPDF = () => {
         const input = pdfRef.current;
         html2canvas(input).then((canvas) => {
@@ -34,6 +35,37 @@ const Itinerary = () => {
     }
     const location = useLocation();
     const itineraryData = location.state?.itineraryData;
+
+    /*new code*/
+    const [minPrice, setMinPrice] = useState(0);
+    const [maxPrice, setMaxPrice] = useState(18000);
+    const [filteredHotels, setFilteredHotels] = useState(itineraryData?.itinerary.hotels || []);
+    const [filteredRestaurants, setFilteredRestaurants] = useState(itineraryData?.itinerary.restaurants || []);
+
+    const handlePriceRangeChange = (min, max, itemType) => {
+        setMinPrice(min);
+        setMaxPrice(max);
+
+        // Filter items based on the selected price range and item type
+        const filteredItems = itineraryData?.itinerary[itemType]?.filter(item => item.price >= min && item.price <= max) || [];
+
+        if (itemType === 'hotels') {
+            setFilteredHotels(filteredItems);
+        } else if (itemType === 'restaurants') {
+            setFilteredRestaurants(filteredItems);
+        }
+    };
+
+    const showAllItems = (itemType) => {
+        // Show all items for the given item type
+        if (itemType === 'hotels') {
+            setFilteredHotels(itineraryData?.itinerary.hotels || []);
+        } else if (itemType === 'restaurants') {
+            setFilteredRestaurants(itineraryData?.itinerary.restaurants || []);
+        }
+    };
+
+    /*ends here*/
 
     if (!itineraryData) {
         return <div>No itinerary data available.</div>;
@@ -87,19 +119,54 @@ const Itinerary = () => {
             </div>
             <hr />
 
-            <h2 className='all-sub-head'>Hotel:</h2>
+            <h2 className='all-sub-head'>Hotels:</h2>
             <div className='hotel-card'>
-                {itineraryData?.itinerary.hotels?.map((item, index) => (
-                    <Hotels key={index} item={item} />
-                ))}
+                <div className="filters">
+                    <button className="range" onClick={() => showAllItems('hotels')}>All</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(1500, 3000, 'hotels')}>1500-3000</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(3000, 6000, 'hotels')}>3000-6000</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(6000, 9000, 'hotels')}>6000-9000</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(9000, 12000, 'hotels')}>9000-12000</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(12000, 15000, 'hotels')}>12000-15000</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(15000, 18000, 'hotels')}>15000-18000</button>
+                </div>
+                <div className="content-card">
+                    {filteredHotels.length > 0 ? (
+                        filteredHotels.map((hotel, index) => (
+                            <Hotels key={index} 
+                                    item={hotel}
+                            />
+                        ))
+                    ) : (
+                        <p>No hotels are available at this price</p>
+                    )}
+                </div>
             </div>
             <hr />
 
-            <h2 className='all-sub-head'>Restaurant:</h2>
+            <h2 className='all-sub-head'>Restaurants:</h2>
             <div className='hotel-card'>
-                {itineraryData?.itinerary.restaurants?.map((item, index) => (
-                    <Restaurants key={index} item={item} />
-                ))}
+                <div className="filters">
+                    <button className="range" onClick={() => showAllItems('restaurants')}>All</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(400, 700, 'restaurants')}>400-700</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(700, 1000, 'restaurants')}>700-1000</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(1000, 1200, 'restaurants')}>1000-1200</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(1200, 1500, 'restaurants')}>1200-1500</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(1500, 1800, 'restaurants')}>1500-1800</button>
+                    <button className="range" onClick={() => handlePriceRangeChange(1800, 2000, 'restaurants')}>1800-2000</button>
+                </div>
+                <div className="content-card">
+                    {filteredRestaurants.length > 0 ? (
+                        filteredRestaurants.map((restaurant, index) => (
+                            <Restaurants 
+                                key={index} 
+                                item={restaurant} 
+                            />
+                        ))
+                    ) : (
+                        <p>No restaurants are available at this price</p>
+                    )}
+                </div>
             </div>
 
             <hr />
@@ -173,7 +240,7 @@ const Itinerary = () => {
 
             <div className="link-button1">
                 <a href="/">Generate Again</a> <span />
-                <button onClick={downloadPDF}>Download Itinerary (PDF)</button>
+                <button onClick={downloadPDF} className='download'>Download Itinerary (PDF)</button>
             </div>
         </div>
     );
