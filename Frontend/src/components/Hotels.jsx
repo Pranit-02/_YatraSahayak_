@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Hotels = ({ item }) => (
-    <div className="card">
+const Hotels = ({ item, isSelected, onSelect}) => (
+    <div className={`card ${isSelected ? 'selected' : ''}`} onClick={onSelect}>
         <div className="card-content">
             <h2 className="card-title">{item?.hotel_name}</h2>
             <p className="card-location">{item?.location}</p>

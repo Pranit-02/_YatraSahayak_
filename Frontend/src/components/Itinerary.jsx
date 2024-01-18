@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import Locations from './Locations';
 import Hotels from './Hotels';
 import Restaurants from './Restaurants';
@@ -29,12 +29,43 @@ const Itinerary = () => {
             const imgX = (pdfWidth - imgWidth * ratio) / 2;
             const imgY = 15;
             pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+
+            // Only include selected hotels and restaurants in the PDF
+            const selectedHotelPrice = selectedHotel ? selectedHotel.price : 0;
+            const selectedRestaurantPrice = selectedRestaurant ? selectedRestaurant.price : 0;
+
+            // Update the total cost in the PDF
+            const totalTransportationCost = itineraryData?.total_cost.transportation || 0;
+            const totalHotelCost = selectedHotelPrice;
+            const totalFoodCost = selectedRestaurantPrice;
+            const totalCost = totalTransportationCost + totalHotelCost + totalFoodCost;
+
+            // Add cost details to the PDF
+            pdf.text(`Transportation: ${totalTransportationCost}`, 15, pdfHeight - 30);
+            pdf.text(`Hotel: ${totalHotelCost}`, 15, pdfHeight - 25);
+            pdf.text(`Food: ${totalFoodCost}`, 15, pdfHeight - 20);
+            pdf.text(`Total Cost: ${totalCost}`, 15, pdfHeight - 15);
+            
             pdf.save('itinerary.pdf')
 
         });
     }
     const location = useLocation();
     const itineraryData = location.state?.itineraryData;
+
+    const [selectedHotel, setSelectedHotel] = useState(null);
+    const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+
+    // Inside the component function, add these functions
+    const handleHotelSelection = (selectedHotel) => {
+        setSelectedHotel(selectedHotel);
+        // You can also perform any other actions related to hotel selection here
+    };
+
+    const handleRestaurantSelection = (selectedRestaurant) => {
+        setSelectedRestaurant(selectedRestaurant);
+        // You can also perform any other actions related to restaurant selection here
+    };
 
     /*new code*/
     const [minPrice, setMinPrice] = useState(0);
@@ -133,8 +164,11 @@ const Itinerary = () => {
                 <div className="content-card">
                     {filteredHotels.length > 0 ? (
                         filteredHotels.map((hotel, index) => (
-                            <Hotels key={index} 
-                                    item={hotel}
+                            <Hotels
+                                key={index}
+                                item={hotel}
+                                isSelected={selectedHotel === hotel} // Add this line to check if the hotel is selected
+                                onSelect={() => handleHotelSelection(hotel)}
                             />
                         ))
                     ) : (
@@ -158,9 +192,11 @@ const Itinerary = () => {
                 <div className="content-card">
                     {filteredRestaurants.length > 0 ? (
                         filteredRestaurants.map((restaurant, index) => (
-                            <Restaurants 
-                                key={index} 
-                                item={restaurant} 
+                            <Restaurants
+                                key={index}
+                                item={restaurant}
+                                isSelected={selectedRestaurant === restaurant} // Add this line to check if the restaurant is selected
+                                onSelect={() => handleRestaurantSelection(restaurant)}
                             />
                         ))
                     ) : (
@@ -231,9 +267,10 @@ const Itinerary = () => {
             <hr />
             <h1 className='all-sub-head'>Estimated Cost (INR)</h1>
             <p>Transportation: {itineraryData?.total_cost.transportation}</p>
-            <p>Hotel: {itineraryData?.total_cost.hotel}</p>
-            <p>Food: {itineraryData?.total_cost.food}</p>
-            {/* <p>Attractions: {itineraryData?.total_cost.attractions}</p> */}
+            <p>Hotel: {selectedHotel ? selectedHotel.price : 0}</p>
+            <p>Food: {selectedRestaurant ? selectedRestaurant.price : 0}</p>
+            {/* <p>Hotel: {itineraryData?.total_cost.hotel}</p>
+            <p>Food: {itineraryData?.total_cost.food}</p> */}
             <p>Total Cost: {itineraryData?.total_cost.total}</p>
 
             <hr />

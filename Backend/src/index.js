@@ -13,10 +13,10 @@ import { spawn } from 'child_process';
 import ConnectDB from "./database/connection"; 
 
 // import Auth from "./api/auth";
-// import User from "./api/user";
+// import User from "./api/user"; 
 
 dotenv.config(); 
-
+ 
 // privateRouteConfig(passport);
 // googleAuthConfig(passport);
 

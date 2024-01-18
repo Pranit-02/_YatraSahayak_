@@ -11,7 +11,7 @@ const Feedback = () => {
   const sendEmail = (e) => {
     e.preventDefault();
 
-    emailjs.sendForm('Your_ServiceID', 'Your_TemplateID', form.current, 'Your_PublicKey')
+    emailjs.sendForm('service_dtzqi7e', 'template_a3rz34d', form.current, 'WDOP8NwhYsPkW9i3U')
       .then((result) => {
         console.log(result.text);
         console.log("message sent")
@@ -23,6 +23,7 @@ const Feedback = () => {
   return (
     <StyledContactForm>
       <form ref={form} onSubmit={sendEmail}>
+        <h1>Feedback</h1>
         <label>Name</label>
         <input type="text" name="user_name" />
         <label>Email</label>
@@ -40,6 +41,10 @@ export default Feedback
 // Styles
 const StyledContactForm = styled.div`
   width: 400px;
+
+  h1{
+    margin-bottom: 20px;
+  }
 
   form {
     display: flex;
